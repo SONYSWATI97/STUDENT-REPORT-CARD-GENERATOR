@@ -1,0 +1,94 @@
+public class Student {
+    private String name;
+    private int rollNumber;
+    private int[] marks;
+    private static final int SUBJECT_COUNT = 5;
+
+    public Student(String name, int rollNumber, int[] marks) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+        this.marks = marks;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getRollNumber() {
+        return rollNumber;
+    }
+
+    public int[] getMarks() {
+        return marks;
+    }
+
+    public int getTotalMarks() {
+        int total = 0;
+        for (int mark : marks) {
+            total += mark;
+        }
+        return total;
+    }
+
+    public float getPercentage() {
+        return getTotalMarks() / (float) SUBJECT_COUNT;
+    }
+
+    public String getGrade() {
+        float percentage = getPercentage();
+        if (percentage >= 90) return "A+";
+        else if (percentage >= 80) return "A";
+        else if (percentage >= 70) return "B";
+        else if (percentage >= 60) return "C";
+        else if (percentage >= 50) return "D";
+        else return "F";
+    }
+}
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class ReportCardService {
+
+    public static void generateReportCard(Student student) {
+        String fileName = "reports/" + student.getRollNumber() + "_ReportCard.txt";
+        try (FileWriter writer = new FileWriter(fileName)) {
+            writer.write("Report Card for Student: " + student.getName() + "\n");
+            writer.write("Roll Number: " + student.getRollNumber() + "\n");
+            writer.write("Marks:\n");
+            int[] marks = student.getMarks();
+            for (int i = 0; i < marks.length; i++) {
+                writer.write("Subject " + (i + 1) + ": " + marks[i] + "\n");
+            }
+            writer.write("Total Marks: " + student.getTotalMarks() + "\n");
+            writer.write("Percentage: " + student.getPercentage() + "%\n");
+            writer.write("Grade: " + student.getGrade() + "\n");
+            System.out.println("Report Card generated successfully for " + student.getName() + "!");
+        } catch (IOException e) {
+            System.out.println("Error while generating report card: " + e.getMessage());
+        }
+    }
+}
+import java.util.Scanner;
+
+public class ReportCardApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter Student Name:");
+        String name = scanner.nextLine();
+
+        System.out.println("Enter Roll Number:");
+        int rollNumber = scanner.nextInt();
+
+        int[] marks = new int[5];
+        System.out.println("Enter marks for 5 subjects:");
+        for (int i = 0; i < 5; i++) {
+            System.out.print("Subject " + (i + 1) + ": ");
+            marks[i] = scanner.nextInt();
+        }
+
+        Student student = new Student(name, rollNumber, marks);
+        ReportCardService.generateReportCard(student);
+    }
+}
